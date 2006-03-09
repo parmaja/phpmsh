@@ -1,0 +1,25 @@
+NameVirtualHost *
+
+<VirtualHost *>
+    ServerAdmin admin@yourdomain1.com
+    DocumentRoot c:\httpd\yourdomain1.com
+    ServerName yourdomain1
+    ErrorLog logs/yourdomain1-error_log
+    CustomLog logs/yourdomain1-access_log common
+</VirtualHost>
+
+
+<VirtualHost *>
+    ServerAdmin admin@yourdomain2.com
+    DocumentRoot c:\httpd\yourdomain2.com
+    ServerName yourdomain2
+    ErrorLog logs/yourdomain2-error_log
+    CustomLog logs/yourdomain2-access_log common
+</VirtualHost>
+
+ScriptAlias /php/ "c:/php/"
+AddType application/x-httpd-php .php
+Action application/x-httpd-php "/php/php.exe"
+LoadModule php4_module C:/PHP/php4apache2.dll
+AddType application/x-httpd-php .php .phtml
+

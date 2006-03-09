@@ -1,0 +1,188 @@
+Public Class Form1
+    Inherits System.Windows.Forms.Form
+    '1***********************************
+ #Region " Windows Form Designer generated code"
+
+    Public Sub New()
+        MyBase.New()
+
+        'This call is required by the Windows Form Designer.
+        InitializeComponent()
+
+        'Add any initialization after the InitializeComponent() call
+
+    End Sub
+
+    'Form overrides dispose to clean up the component list.
+    Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
+        If disposing Then
+            If Not (components Is Nothing) Then
+                components.Dispose()
+            End If
+        End If
+        MyBase.Dispose(disposing)
+    End Sub
+
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
+
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        components = New System.ComponentModel.Container()
+        Me.Text = "Form1"
+    End Sub
+
+ #End Region
+End Class
+
+
+   Private Sub SetDragValue(ByVal mouseLocation As Point)
+
+        Dim client As Rectangle = ClientRectangle
+
+        If (client.Contains(mouseLocation)) Then
+
+            Dim percentage As Single = CSng(mouseLocation.X) / CSng(ClientRectangle.Width)
+            Dim newDragValue As Integer = CInt(percentage * CSng(Max - Min))
+
+            If (newDragValue <> dragValue) Then
+                Dim old As Integer = dragValue
+                dragValue = newDragValue
+                OptimizedInvalidate(old, dragValue)
+            End If
+
+        Else
+
+            If (client.Y <= mouseLocation.Y And mouseLocation.Y <= client.Y + client.Height) Then
+                If (mouseLocation.X <= client.X And mouseLocation.X > client.X - LeftRightBorder) Then
+                    Dim newDragValue As Integer = Min
+                    If (newDragValue <> dragValue) Then
+                        Dim old As Integer = dragValue
+                        dragValue = newDragValue
+                        OptimizedInvalidate(old, dragValue)
+                    End If
+
+                ElseIf (mouseLocation.X >= client.X + client.Width And mouseLocation.X < client.X + client.Width + LeftRightBorder) Then
+                    Dim newDragValue As Integer = Max
+                    If (newDragValue <> dragValue) Then
+                        Dim old As Integer = dragValue
+                        dragValue = newDragValue
+                        OptimizedInvalidate(old, dragValue)
+                    End If
+                End If
+
+            Else
+                If (dragValue <> Value) Then
+                    Dim old As Integer = dragValue
+                    dragValue = Value
+                    OptimizedInvalidate(old, dragValue)
+                End If
+
+            End If
+
+        End If
+
+    End Sub
+    "lk;lklk;kl;k"
+
+    Protected Overrides Sub OnResize(ByVal e As EventArgs)
+        MyBase.OnResize(e)
+        If Not (baseBackground Is Nothing) Then
+            baseBackground.Dispose()
+            baseBackground = Nothing
+        End If
+    End Sub
+
+Imports System
+Imports System.ComponentModel
+
+Private Sub CopyData(ByVal FromStream As Stream, ByVal ToStream As Stream)
+        ' This routine copies content from one stream to another, regardless
+        ' of the media represented by the stream.
+
+        ' This will track the # bytes read from the FromStream
+        Dim intBytesRead As Integer
+
+        ' The maximum size of each read
+        Const intSize As Integer = 4096
+        Dim bytes(intSize) As Byte
+
+        ' Read the first bit of content, then write and read all the content
+        ' From the FromStream to the ToStream.
+        intBytesRead = FromStream.Read(bytes, 0, intSize)
+        While intBytesRead > 0
+            ToStream.Write(bytes, 0, intBytesRead)
+            intBytesRead = FromStream.Read(bytes, 0, intSize)
+        End While
+    End Sub
+
+        Catch exp As Exception
+            MessageBox.Show(exp.Message, Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            Try
+                If Not rsp Is Nothing Then
+                    rsp.Close()
+                End If
+            Catch
+
+            End Try
+        End Try
+
+Option Strict On
+WithEvents
+
+ '„‘Ìœ «·ﬂÊ‰ —Ê·
+    Public Sub New()
+        '«” œ⁄«¡ „‘Ìœ «·’‰› «·√”«” ›Ì «·»œ«Ì…
+        MyBase.New()
+
+        Dim i, j As Integer
+        Dim InternalTable As New DataTable
+        Dim TblRow As DataRowView
+        '»‰«¡ √⁄„œ… «·ÃœÊ· «·œ«Œ·Ì Ê›ﬁ «·»‰Ì… «·„ÿ·Ê»…
+        For i = 0 To Cols - 1
+            InternalTable.Columns.Add("Col" & i.ToString, GetType(String))
+        Next
+        '  €·Ì› «·ﬂ«∆‰ (ÃœÊ· »Ì«‰« )»«·ﬂ«∆‰ („” ⁄—÷ »Ì«‰« )·Õ· „‘ﬂ·… ≈÷«›… ”ÿ— ÃœÌœ Êﬁ  «· ‘€Ì·
+        InternalView = New DataView(InternalTable)
+        '»‰«¡ √⁄„œ… „” ⁄—÷ «·»Ì«‰«  Ê›ﬁ «·»‰Ì… «·„ÿ·Ê»…
+        For j = 0 To IRows - 1
+            TblRow = InternalView.AddNew
+            For i = 0 To ICols - 1
+                TblRow.Item(i) = ""
+            Next
+        Next
+        '··”„«Õ ··„” Œœ„ »⁄„·Ì…  Õ—Ì— «·Œ·«Ì«
+        InternalView.AllowEdit = True
+        '⁄œ„ «·”„«Õ »≈÷«›… ”ÿ— ÃœÌœ »‘ﬂ·  ·ﬁ«∆Ì
+        InternalView.AllowNew = False
+        '«”‰«œ »‰Ì… «· Œ“Ì‰ «·œ«Œ·Ì… ··Œ·«Ì« «·Ï «·ﬂÊ‰ —Ê· «·„‘ ﬁ
+        Me.DataSource = InternalView
+        '  ÃÂÌ“ √»⁄«œ «·ﬂÊ‰ —Ê· »‘ﬂ· ≈› —«÷Ì Êﬁ  «· ’„Ì„
+        Me.Width = 360
+        Me.Height = 160
+    End Sub
+
+   Public Property Rows() As Integer
+        Get
+            Return IRows
+        End Get
+        Set(ByVal Value As Integer)
+            If Value < 0 Then
+                MsgBox("The Number of Rows must be greater than zero", MsgBoxStyle.Critical, "Error")
+                Exit Property
+            End If
+            '”Ì „ «” œ⁄«¡  «»⁄ »«‰Ì «·ﬂÊ‰ —Ê· ›ﬁÿ
+            '›Ì Õ«·  €Ì— ⁄œœ «·√”ÿ—
+            If IRows <> Value Then
+                '«·«Õ ›«Ÿ »«·ﬁÌ„… «·ﬁœÌ„… ·⁄œœ «·√”ÿ—
+                OldRows = IRows
+                '«”‰«œ «·ﬁÌ„… «·ÃœÌœ…
+                IRows = Value
+                '«” œ⁄«¡ »«‰Ì «·ﬂÊ‰ —Ê·
+                PrepareFlexGrid(IRows, ICols)
+            End If
+        End Set
+    End Property

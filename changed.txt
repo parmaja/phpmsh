@@ -1,0 +1,13 @@
+- add cpp support
+- migrate to xhtml code
+- add apache syn
+- fixed # in php
+- fixed \\ \' in ' string php
+- fixed detect identifier open and close
+
+- add vbnet support
+- add php support
+- fix bug of multiline string format (firebird,mssql)
+- extract colors to colors.php
+- small changed to hack punbb
+- if class not exist use plan class

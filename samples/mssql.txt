@@ -1,0 +1,12 @@
+-- Back up the currently active transaction log.
+BACKUP LOG MyNwind
+TO MyNwind_log2
+WITH NO_TRUNCATE
+GO
+-- Restore the database backup.
+RESTORE DATABASE MyNwind
+FROM MyNwind_1
+WITH NORECOVERY
+GO
+
+

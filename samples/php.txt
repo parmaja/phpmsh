@@ -1,0 +1,34 @@
+<?php
+
+$db_type = 'mysql';
+$db_host = 'localhost';
+$db_name = 'parmaja_com';
+$db_username = 'zaherdirkey';
+$db_password = 'diputstonmai';
+$db_prefix = 'punbb_';
+$p_connect = true;
+
+$cookie_name = 'punbb_cookie';
+$cookie_domain = '';
+$cookie_path = '/';
+$cookie_secure =0 ;
+
+if (!isset($language))
+  $language = 'en';
+
+//header('Content-Type: text/html; charset=windows-1256');
+header('Content-Type: text/html; charset=windows-1256');
+
+$pun_url='http://www.parmaja.com/forum';
+
+/* define('PUN',1 );
+if (getenv('SITE')=='LOCAL')
+{
+        define('PUN_DEBUG',1);
+}
+*/
+
+$s='select * from forums
+where forum not found';
+
+?>

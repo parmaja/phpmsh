@@ -1,0 +1,30 @@
+create or alter procedure "procLogin"
+(
+  "UserName" varchar(60),
+  "UserPassword" varchar(60),
+  "UserSite" integer,
+  "UserIsOccult" integer
+)
+returns
+(
+  "SessionID" integer,
+  "User" integer
+)
+as
+declare variable "UserAccount" integer;
+-- variable of user
+begin
+/* select a user from
+   users table */
+    select "UsrID" from "Users"
+    where "UsrName"=:"UserName" and
+          "UsrPassword"=:"UserPassword"
+    into :"User";
+    if ("User" is not null) then
+    begin
+      "SessionID"=CURRENT_CONNECTION;
+      insert into "Sessions" ("SessionID","SessionUser","SessionSite","SessionIsOccult")
+          values(:"SessionID",:"User",:"UserSite",:"UserIsOccult");
+    end
+  suspend;
+end

@@ -1,0 +1,25 @@
+program cgi_test;
+
+uses
+    WinCrt,SysUtils;//I use freepascal
+{
+#i am not expert with Apache :-(
+#add to apache server config file httpd.conf  this line
+
+AddHandler cgi-script cgi exe,
+}
+
+begin
+  //send header to the browser
+  WriteLn('Content-Type: text/html');
+
+  WriteLn('');//end of header
+
+  //send html
+  WriteLn('<html>');
+  WriteLn('<body>');
+  WriteLn('<h5>Hello World From Pascal</h><br>');
+  //WriteLn(IntToStr(ParamCount));
+  WriteLn('</body>');
+  WriteLn('</html>');
+end.

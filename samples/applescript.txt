@@ -1,0 +1,13 @@
+tell application "Finder"
+  activate
+  select file "AppleScript.url"
+  set position of selection to {656,277 }
+  set position of selection to {700,282 }
+  select file "terms.pdf"
+-- comment line
+  set position of selection to {723,192 }
+(*
+  this is a
+    comment
+*)
+end tell
