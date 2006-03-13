@@ -9,7 +9,7 @@
 
 <body>
 <div class="syn_code">
-	<pre>
+        <pre>
 <?
 include '../functions.php';
   $code='
@@ -23,9 +23,10 @@ begin
            //do somthing here
   end;
 end.';
+
   echo highlight_code_syn('pascal', $code);
 ?>
-		</pre>
-	</div>
+                </pre>
+        </div>
 </body>
 </html>

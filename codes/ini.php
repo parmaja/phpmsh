@@ -25,7 +25,7 @@
 
 ************************************************************************/
 
-  class ini_syn extends plan_code_syn
+  class ini_syn extends plain_code_syn
   {
     function initialize(){
     }

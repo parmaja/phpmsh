@@ -25,7 +25,7 @@
 
 ************************************************************************/
 
-  class sql_syn extends plan_code_syn
+  class sql_syn extends plain_code_syn
   {
     var $keywords;
     function initialize(){
@@ -242,7 +242,7 @@
         $this->close_state=$this->state;//close if string breaked
               $out.=substr($code, $i, $j - $i);
               $i=$j - 1;
-              if (!$this->keywords->find($out))
+              if (!$this->keywords->found($out))
                     {
                       $this->state=S_NONE;
                       $this->open_state=S_NONE;

@@ -39,6 +39,28 @@
 
 //function for fast find keywords
 
+class echo_output{
+  function write(&$code)
+  {
+    echo $code;
+  }
+}
+
+class variable_output{
+  var $result = '';
+  function write(&$code)
+  {
+    $this->result =  $this->result.$code;
+  }
+}
+
+class file_output{
+  var $file;
+  function write(&$code)
+  {
+  }
+}
+
 class keywords{
 
   var $list = array();
@@ -58,7 +80,7 @@ class keywords{
       }
     }
 
-    function find($keyword)
+    function find(&$keyword)
     {
       if (!$this->casesensitive)
         $keyword = strtolower($keyword);
@@ -70,6 +92,9 @@ class keywords{
         return false;
     }
 
+    function found(&$keyword){
+      return $this->find($keyword)!==false;
+    }
 }
 
 //common functions
@@ -91,10 +116,11 @@ function is_identifier($ch)
 
 $cache_syn_objects = array();
 
-//base class for all syn classes, or the plan class
+//base class for all syn classes, or the plain class
 
-  class plan_code_syn
+  class plain_code_syn
   {
+    var $output;
     var $styles;
     var $state=S_NONE;
     var $open_state=S_NONE;
@@ -105,7 +131,7 @@ $cache_syn_objects = array();
     var $gatter_with = 10;
     var $gatter_start = 1;*/
 
-    function plan_code_syn()
+    function plain_code_syn()
     {
       $this->styles = array(
         S_KEYWORD => array('<span class="syn_keyword">','</span>'),
@@ -134,6 +160,14 @@ $cache_syn_objects = array();
       return str_replace("\t", $this->spaces, $result);
     }
 
+    function internal_echo(&$out)
+    {
+      if (isset($this->output))
+        $this->output->write($out);
+      else
+        echo $out;
+    }
+
     function text_out(&$out)
     {
         $out=$this->format_out($out);
@@ -148,18 +182,15 @@ $cache_syn_objects = array();
           $this->open_state=S_NONE;
           $this->state=S_NONE;
         }
-        echo $out;
+        $this->internal_echo($out);
         $out='';
     }
 
-    function highlight(&$code)
+    function highlight(&$code) //virtual
     {
-      echo $this->format_out($code);//plan code
+      $this->internal_echo($this->format_out($code));//plain code
     }
 
-    function get_example(){
-      return 'No example';
-    }
     //functions for helping standard languages
     function process_std_line_comment(&$i, &$l, &$code, &$out){
       $j = strpos($code,"\n",$i);
@@ -195,7 +226,7 @@ $cache_syn_objects = array();
       $this->close_state = $this->state;
       $out.=substr($code, $i, $j - $i);
       $i = $j - 1;
-      if (!$this->keywords->find($out))
+      if (!$this->keywords->found($out))
       {
         $this->state=S_NONE;
         $this->open_state=S_NONE;
@@ -203,12 +234,12 @@ $cache_syn_objects = array();
       }
     }
 
-    function highlight_code($code)
+    function highlight_code(&$code)
     {
-      ob_start();
+      $this->output = new variable_output;
       $this->highlight($code);
-      $result = ob_get_contents();
-      ob_end_clean();
+      $result = $this->output->result;
+      unset($this->output);
       return $result;
     }
 

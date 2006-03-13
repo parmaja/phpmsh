@@ -25,7 +25,7 @@
 
 ************************************************************************/
 
-  class cpp_syn extends plan_code_syn
+  class cpp_syn extends plain_code_syn
   {
     var $directives;
     var $keywords;

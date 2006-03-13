@@ -26,12 +26,12 @@ function get_class_syn($ext)
   $syn_class=$ext.'_syn';
   if (!class_exists($syn_class))
   {
-    include_once(dirname(__FILE__).'/plan.php');
+    include_once(dirname(__FILE__).'/classes.php');
     $ext_file=dirname(__FILE__).'/codes/'.$ext.'.php';
     if (file_exists($ext_file))
       include_once($ext_file);
     else
-      $syn_class='plan_code_syn';
+      $syn_class='plain_code_syn';
   }
   return $syn_class;
 }

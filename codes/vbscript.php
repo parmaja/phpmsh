@@ -25,7 +25,7 @@
 
 ************************************************************************/
 
-  class vbscript_syn extends plan_code_syn
+  class vbscript_syn extends plain_code_syn
   {
     var $keywords;
     function initialize(){
