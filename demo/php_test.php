@@ -11,10 +11,12 @@
 		<pre>
 <?
 	include '../functions.php';
-//  highlight_filename_syn('apache', realpath('./apache.txt'));
-  highlight_filename_syn('php', realpath('./php.txt'));
+  highlight_filename_syn('firebird', realpath('../samples/firebird.txt'));
+//  highlight_filename_syn('apache', realpath('../samples/apache.txt'));
+//  highlight_filename_syn('php', realpath('../samples/php.txt'));
 ?>
 		</pre>
+		Ok this must a test.
 	</div>
 </body>
 </html>

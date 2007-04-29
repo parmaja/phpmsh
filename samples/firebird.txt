@@ -1,8 +1,8 @@
 create or alter procedure "procLogin"
 (
   "UserName" varchar(60),
-  "UserPassword" varchar(60),
-  "UserSite" integer,
+  "UserPassword" char(60),
+  "UserSite" INTEGER,
   "UserIsOccult" integer
 )
 returns

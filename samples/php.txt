@@ -1,5 +1,3 @@
-<?php
-
 $db_type = 'mysql';
 $db_host = 'localhost';
 $db_name = 'parmaja_com';
@@ -17,7 +15,7 @@ if (!isset($language))
   $language = 'en';
 
 //header('Content-Type: text/html; charset=windows-1256');
-header('Content-Type: text/html; charset=windows-1256');
+header('Content-Type: text/html; charset=windows-1256'); //send a header
 
 $pun_url='http://www.parmaja.com/forum';
 
@@ -29,6 +27,4 @@ if (getenv('SITE')=='LOCAL')
 */
 
 $s='select * from forums
-where forum not found';
-
-?>
+where forum not found';//end of file

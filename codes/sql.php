@@ -217,7 +217,7 @@
               if ($j===false)
                 $j=$l-1;
         else
-                      $this->close_state=$this->state;
+              $this->close_state=$this->state;
               $out.=substr($code, $i, $j - $i + 1);
               $i=$j;
               break;
@@ -239,7 +239,7 @@
                   break;
                 $j++;
               }
-        $this->close_state=$this->state;//close if string breaked
+              $this->close_state=$this->state;//close if string breaked
               $out.=substr($code, $i, $j - $i);
               $i=$j - 1;
               if (!$this->keywords->found($out))
@@ -252,21 +252,21 @@
             }
             case S_STRING:
             {
-              $j=$i;
+              $j = $i;
               while ($j < $l)
               {
                 if ($code{$j}=='\'')
-          {
-           $out.=substr($code, $i, $j - $i + 1);//string in firebird support multiline
-                  break;
-          }
+                {
+                 $this->close_state=$this->state;
+                 break;
+                }
                 $j++;
               }
               $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
+              $i = $j;
               break;
             }
-    }
+          }
         }
 
         $this->text_out($out);

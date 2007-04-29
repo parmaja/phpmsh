@@ -105,10 +105,10 @@
             $next_ch = $code{$i+1};
           else
             $next_ch = '';
-          if ($ch=='#')
+          if ($ch == '#')
           {
             $this->state=S_COMMENT1;
-            $out=$ch;
+            $out = $ch;
             $i++;
           }
           else if ($ch=='/' and $next_ch=='/')
@@ -215,21 +215,21 @@
             }
             case S_STRING:
             {
-              $j=$i;
+              $j = $i;
               while ($j < $l)
               {
                 if (($code{$j}=="\\") and ($j+1)<$l and (($code{$j+1}=='"') or ($code{$j+1}=='\'')))
                   $j++;
                 else
-                if ($code{$j}=='\'')
-                {
-                  $this->close_state=$this->state;
-                  break;
-                }
+                  if ($code{$j}=='\'')
+                  {
+                    $this->close_state=$this->state;
+                    break;
+                  }
                 $j++;
               }
               $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
+              $i = $j;
               break;
             }
             case S_STRING2:

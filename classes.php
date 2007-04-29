@@ -36,6 +36,7 @@
   define('S_IDENTIFIER',11);
   define('S_VARIABLE',12);
   define('S_VALUE',13);
+  define('S_DATATYPE',14);
 
 //function for fast find keywords
 
@@ -80,16 +81,20 @@ class keywords{
       }
     }
 
-    function find(&$keyword)
+    function find($keyword)
     {
       if (!$this->casesensitive)
         $keyword = strtolower($keyword);
 
-      $a = $this->list[$keyword{0}];
-      if (is_array($a))
-        return array_search($keyword, $a);
-      else
-        return false;
+      if (array_key_exists($keyword{0}, $this->list)) {
+        $a = $this->list[$keyword{0}];
+        if (is_array($a))
+          return array_search($keyword, $a);
+        else
+          return false;
+       }
+       else
+         return false;
     }
 
     function found(&$keyword){
@@ -147,7 +152,8 @@ $cache_syn_objects = array();
         S_COMMENT3 => array('<span class="syn_comment3">','</span>'),
         S_DIRECTIVE => array('<span class="syn_directive">','</span>'),
         S_VARIABLE => array('<span class="syn_variable">','</span>'),
-        S_VALUE => array('<span class="syn_value">','</span>')
+        S_VALUE => array('<span class="syn_value">','</span>'),
+        S_DATATYPE => array('<span class="syn_datatype">','</span>')
       );
 
       if (method_exists($this, 'initialize'))
@@ -226,7 +232,7 @@ $cache_syn_objects = array();
       $this->close_state = $this->state;
       $out.=substr($code, $i, $j - $i);
       $i = $j - 1;
-      if (!$this->keywords->found($out))
+      if (!$keywords->found($out))
       {
         $this->state=S_NONE;
         $this->open_state=S_NONE;
@@ -237,6 +243,10 @@ $cache_syn_objects = array();
     function highlight_code(&$code)
     {
       $this->output = new variable_output;
+      //because we can proceess the code as chunks so the hilighter wait a "\n" to end the line.
+      //code must have EOL if not we add it
+      if (substr($code, -1, 1) <> "\n")
+        $code = $code . "\n";
       $this->highlight($code);
       $result = $this->output->result;
       unset($this->output);
@@ -249,7 +259,9 @@ $cache_syn_objects = array();
       $f=fopen($file,'r');
       while (!feof($f))
       {
-        $line=fgets($f);
+        $line = fgets($f);
+        if (substr($line, -1, 1) <> "\n")
+          $line = $line."\n";
         $this->highlight($line);
         flush();
       }

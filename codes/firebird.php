@@ -29,6 +29,12 @@
   {
     var $keywords;
     function initialize(){
+    $this->datatypes = new keywords(false, array(
+      'integer',
+      'varchar'
+      )
+    );
+    
     $this->keywords = new keywords(false, array(
         'active',
         'add',
@@ -386,10 +392,16 @@
                   break;
                 $j++;
               }
+              
               $this->close_state=$this->state;//close if string breaked
+              
               $out.=substr($code, $i, $j - $i);
               $i=$j - 1;
-              if (!$this->keywords->found($out))
+              if ($this->datatypes->found($out))
+              {
+                $this->open_state=S_DATATYPE;
+              }
+              else if (!$this->keywords->found($out))
               {
                 $this->state=S_NONE;
                 $this->open_state=S_NONE;

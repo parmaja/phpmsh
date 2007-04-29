@@ -1,3 +1,5 @@
+- Fix: last line must have "\n" char to process EOL
+
 - add cpp support
 - migrate to xhtml code
 - add apache syn

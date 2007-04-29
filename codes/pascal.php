@@ -233,7 +233,7 @@
             }
             case S_STRING:
             {
-              $j=$i;
+              $j = $i;
               while ($j < $l)
               {
                 if ($code{$j}=='\'')
@@ -242,7 +242,7 @@
               }
               $this->close_state=$this->state;  //pascal or delphi is not multi line string like php
               $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
+              $i = $j;
               break;
             }
           }
