@@ -239,7 +239,7 @@ $cache_syn_objects = array();
         $this->close_state=S_NONE;
       }
     }
-
+    
     function highlight_code(&$code)
     {
       $this->output = new variable_output;
