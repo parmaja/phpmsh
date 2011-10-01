@@ -67,4 +67,3 @@ Sub LoadResStrings(frm As Form)
     Next
 
 End Sub
-

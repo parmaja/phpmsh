@@ -22,4 +22,3 @@ AddType application/x-httpd-php .php
 Action application/x-httpd-php "/php/php.exe"
 LoadModule php4_module C:/PHP/php4apache2.dll
 AddType application/x-httpd-php .php .phtml
-

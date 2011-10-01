@@ -9,4 +9,3 @@ FROM MyNwind_1
 WITH NORECOVERY
 GO
 
-
