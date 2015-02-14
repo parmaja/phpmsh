@@ -37,6 +37,7 @@
         'ifdef',
         'ifndef',
         'include',
+        'import',
         'line',
         'pragma',
         'undef',
