@@ -30,21 +30,6 @@
     var $directives;
     var $keywords;
     function initialize(){
-    $this->directives = new keywords(true, array(
-      '#define',
-      '#elif',
-      '#else',
-      '#endif',
-      '#error',
-      '#if',
-      '#ifdef',
-      '#ifndef',
-      '#include',
-      '#line',
-      '#pragma',
-      '#printf',
-      '#undef')
-    );
 
     $this->keywords = new keywords(false, array(
       'define',
@@ -127,10 +112,8 @@
       'virtual',
       'void',
       'volatile',
-      'wchar_t',
       'while',
-      'xor',
-      'xor_eq')
+      'xor'
       );
     }
 
@@ -223,12 +206,6 @@
             case S_KEYWORD:
             {
               $this->process_std_identifier($i, $l, $code, $this->keywords, $out);
-              break;
-            }
-
-            case S_DIRECTIVE:
-            {
-              $this->process_std_identifier($i, $l, $code, $this->directives, $out);
               break;
             }
 

@@ -111,6 +111,7 @@ function is_identifier_open($ch)
   else
     return false;
 }
+
 function is_identifier($ch)
 {
   if (($ch>='a' and $ch<='z') or ($ch>='A' and $ch<='Z') or ($ch>='0' and $ch<='9') or ($ch=='_'))
