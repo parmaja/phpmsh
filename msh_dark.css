@@ -7,72 +7,66 @@
 
 #syn_code {
   direction: ltr;
-  font-family: "Courier New", courier, monaco, "Bitstream Vera Sans Mono", monospace;
-   font-size: 10pt;
+  font-size: 10pt;
 }
 
 .syn_keyword {
-  color: #0000bb;
+  color:#4f89b9;
   font-weight: bold;
 }
 
 .syn_identifier {
-  color: #0000bb;
+  color:#97bace;
   font-weight: normal;
 }
 
 .syn_number {
-  color: #000000;
+  color:#9ac7a2;
   font-weight: bold;
 }
 
 .syn_string {
-  color: #008000;
+  color:#9ecc91;
   font-weight: bold;
 }
 
 .syn_string2 {
-  color: #008000;
+  color:#a6ce9f;
   font-weight: bold;
 }
 
 .syn_symbol {
-  color: #008000;
-  font-weight: bold;
-}
-
-.syn_number {
-  color: #008000;
+  color:#c5d3e4;
   font-weight: bold;
 }
 
 .syn_object {
-  color: #008000;
+  color:#e4d6a3;
   font-weight: bold;
 }
 
 .syn_comment1 {
-  color: #c24545;
+  color:#a3a5a3;
   font-weight: bold;
 }
 
 .syn_comment2 {
-  color: #c24545;
+  color:#a3a5a3;
   font-weight: bold;
 }
 
 .syn_comment3 {
-  color: #c24545;
+  color: #a3a5a3;
   font-weight: bold;
 }
 
 .syn_directive {
-  color: #800000;
+  color:#e46b6b;
   font-weight: bold;
 }
 
 .syn_variable {
-  color: #000090;
+  color:#aeaeff;
   font-weight: normal;
 }
 
@@ -82,6 +76,6 @@
 }
 
 .syn_datatype {
-  color: #B92EB9;
+  color:#D69FD7;
   font-weight: normal;
 }

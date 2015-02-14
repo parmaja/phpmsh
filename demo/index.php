@@ -4,13 +4,13 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us" />
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
-<link rel="stylesheet" type="text/css" href="../syn.css" />
+<link rel="stylesheet" type="text/css" href="../msh_light.css" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Multi Syntax Highlighter Samples</title>
 </head>
 
 <body>
-<?
+<?php
   include '../functions.php';
   $dir = "../samples/";
   if ($dh = opendir($dir)) {
@@ -19,19 +19,19 @@
 
 ?>
   <div class="language">
-<?
+<?php
 echo basename($file, '.txt');
 
 ?>
 </div>
 <div class="syn_code">
         <pre>
-<?
+<?php
       highlight_filename_syn(basename($file, '.txt'), realpath($dir.$file));
 ?>
         </pre>
 </div>
-<?
+<?php
       }
   }
        closedir($dh);

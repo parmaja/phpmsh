@@ -3,14 +3,14 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us" />
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
-<link rel="stylesheet" type="text/css" href="../syn.css" />
+<link rel="stylesheet" type="text/css" href="../msh_light" />
 <title>Multi Syntax Highlighter Sample</title>
 </head>
 
 <body>
 <div class="syn_code">
         <pre>
-<?
+<?php
 include '../functions.php';
   $code='
 program test;

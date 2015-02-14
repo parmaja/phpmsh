@@ -3,20 +3,20 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us" />
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
-<link rel="stylesheet" type="text/css" href="../syn.css" />
+<link rel="stylesheet" type="text/css" href="../msh_light" />
 <title>Multi Syntax Highlighter Sample</title>
 </head>
 <body>
-	<div class="syn_code">
-		<pre>
-<?
-	include '../functions.php';
+  <div class="syn_code">
+    <pre>
+<?php
+  include '../functions.php';
   highlight_filename_syn('firebird', realpath('../samples/firebird.txt'));
 //  highlight_filename_syn('apache', realpath('../samples/apache.txt'));
 //  highlight_filename_syn('php', realpath('../samples/php.txt'));
 ?>
-		</pre>
-		Ok this must a test.
-	</div>
+    </pre>
+    Ok this must a test.
+  </div>
 </body>
 </html>

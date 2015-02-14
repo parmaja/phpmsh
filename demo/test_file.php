@@ -3,18 +3,18 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us" />
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
-<link rel="stylesheet" type="text/css" href="../syn.css" />
+<link rel="stylesheet" type="text/css" href="../msh_light" />
 <title>Multi Syntax Highlighter Sample</title>
 </head>
 <body>
 <div class="syn_code">
-	<pre>
-<?
-	include '../functions.php';
+  <pre>
+<?php
+  include '../functions.php';
   highlight_filename_syn('firebird','firebird.txt');
 //  highlight_filename_syn('delphi','C:\Program Files\Borland\Delphi7\Source\Rtl\Win\Windows.pas');
 ?>
-		</pre>
-	</div>
+    </pre>
+  </div>
 </body>
 </html>

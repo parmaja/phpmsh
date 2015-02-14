@@ -1,4 +1,4 @@
-<?
+<?php
   function get_microtime()
   {
           list($usec, $sec) = explode(' ', microtime());
