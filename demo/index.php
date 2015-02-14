@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="../src/msh_light.css" />
+<link rel="stylesheet" type="text/css" href="../src/msh_dark.css" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Multi Syntax Highlighter Samples</title>
 </head>
@@ -18,7 +18,7 @@
       if (!is_dir($file)) {
 
 ?>
-  <div class="language">
+  <div class="title">
 <?php
 echo basename($file, '.txt');
 

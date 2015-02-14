@@ -1,6 +1,11 @@
-.language {
-  background-color: black;
-  color:White;
+.title {
+  background: black;
+  color: white;
   font-weight: bold;
   padding: 3px;
+}
+
+code, pre{
+  background:#1d1814;
+  color: white;
 }
