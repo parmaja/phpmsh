@@ -1,3 +1,4 @@
+- Add: d.php D language
 - Add: pb.php Power Builder code highlighter written by REGIS SCHWARTZ
 - Fix: Sql multi line string, thanks to REGIS SCHWARTZ
 - Fix: last line must have "\n" char to process EOL
