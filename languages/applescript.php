@@ -3,13 +3,13 @@
 
   Copyright (C) 2004  zaher dirkey (zaher@parmaja.com)
 
-  This file is part of phpMultiSyn.
+  This file is part of .
 
-  phpMultiSyn is free software; you can redistribute it and/or modify it
+   is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published
   by the Free Software Foundation;
 
-  phpMultiSyn is distributed in the hope that it will be useful, but
+   is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -22,75 +22,34 @@
 ************************************************************************
 
   This syntax class writen by Zaher Dirkey zaher@parmaja.com
+  thanks to Ray Barber for help
 
 ************************************************************************/
 
-  class php_syn extends plain_code_syn
+  class applescript_syn extends plain_code_syn
   {
     var $keywords;
     function initialize(){
-    $this->keywords = new keywords(false, array(
-        'and',
-        'or',
-        'xor',
-        '__FILE__',
-        'exception',
-        'php_user_filter',
-        '__LINE__',
-        'array',
-        'as',
-        'break',
-        'case',
-        'cfunction',
-        'class',
-        'const',
-        'continue',
-        'declare',
-        'default',
-        'die()',
-        'do',
-        'echo',
-        'else',
-        'elseif',
-        'empty',
-        'enddeclare',
-        'endfor',
-        'endforeach',
-        'endif',
-        'endswitch',
-        'endwhile',
-        'eval',
-        'exit',
-        'extends',
-        'for',
-        'foreach',
-        'function',
-        'global',
+      $this->keywords = new keywords(false, array(
         'if',
-        'include',
-        'include_once',
-        'isset',
-        'list',
-        'new',
-        'old_function',
-        'print',
-        'require',
-        'require_once',
-        'return',
-        'static',
-        'switch',
-        'unset',
-        'use',
-        'var',
-        'while',
-        '__FUNCTION__',
-        '__CLASS__',
-        '__METHOD__')
+        'else',
+        'of',
+        'to',
+        'every',
+        'tell',
+        'property',
+        'set',
+        'select',
+        'on',
+        'end'
+        )
       );
     }
 
     function highlight(&$code)
     {
+      $InPropertyName=false;
+      $DoPropertyName=false;
       $ch = '';
       $next_ch = '';
       $l=strlen($code);
@@ -105,20 +64,14 @@
             $next_ch = $code{$i+1};
           else
             $next_ch = '';
-          if ($ch == '#')
-          {
-            $this->state=S_COMMENT1;
-            $out = $ch;
-            $i++;
-          }
-          else if ($ch=='/' and $next_ch=='/')
+          if ($ch=='-' and $next_ch=='-')
           {
             $this->state=S_COMMENT1;
             $out=$ch.$next_ch;
             $i++;
             $i++;
           }
-          else if ($ch=='/' and $next_ch=='*')
+           else if ($ch=='(' and $next_ch=='*')
           {
             $this->state=S_COMMENT2;
             $out=$ch.$next_ch;
@@ -130,22 +83,10 @@
             $this->state=S_KEYWORD;
             $out=$ch;
             $i++;
-         }
-         else if ($ch=='$')
-        {
-            $this->state=S_VARIABLE;
-            $out=$ch;
-            $i++;
-          }
-          else if ($ch=='\'')
-          {
-            $this->state=S_STRING;
-            $out=$ch;
-            $i++;
           }
           else if ($ch=='"')
           {
-            $this->state=S_STRING2;
+            $this->state=S_STRING;
             $out=$ch;
             $i++;
           }
@@ -171,7 +112,7 @@
               $i=$j;
               break;
             case S_COMMENT2:
-              $j=strpos($code,'*/',$i);
+              $j=strpos($code,'*)',$i);
               if ($j===false)
                 $j = $l - 1;
               else
@@ -184,26 +125,6 @@
               $j= $i;
               while ($j < $l)
               {
-                if (!is_identifier($code{$j}))
-                  break;
-                $j++;
-              }
-              $this->close_state=$this->state;//close if string breaked
-              $out.=substr($code, $i, $j - $i);
-              $i=$j - 1;
-              if (!$this->keywords->found($out))
-              {
-                      $this->state=S_NONE;
-                $this->open_state=S_NONE;
-                $this->close_state=S_NONE;
-              }
-              break;
-            }
-            case S_VARIABLE:
-            {
-              $j= $i;
-              while ($j < $l)
-              {
                 if ((!is_identifier($code{$j})))
                   break;
                 $j++;
@@ -211,41 +132,40 @@
               $this->close_state=$this->state;
               $out.=substr($code, $i, $j - $i);
               $i=$j - 1;
+              if (!$this->keywords->found($out))
+              {
+                if ($InPropertyName===true)
+                {
+                  $this->open_state=S_IDENTIFIER;
+                  $this->close_state=S_IDENTIFIER;
+                  $InPropertyName=false;
+                 }
+                  else
+                {
+                  $this->state=S_NONE;
+                  $this->open_state=S_NONE;
+                  $this->close_state=S_NONE;
+                }
+              }
+              else
+              {
+                if ($out=='property')
+                  $InPropertyName=true;
+                else
+                  $InPropertyName=false;
+              }
               break;
             }
             case S_STRING:
             {
-              $j = $i;
-              while ($j < $l)
-              {
-                if (($code{$j}=="\\") and ($j+1)<$l and (($code{$j+1}=='"') or ($code{$j+1}=='\'')))
-                  $j++;
-                else
-                  if ($code{$j}=='\'')
-                  {
-                    $this->close_state=$this->state;
-                    break;
-                  }
-                $j++;
-              }
-              $out.=substr($code, $i, $j - $i + 1);
-              $i = $j;
-              break;
-            }
-            case S_STRING2:
-            {
               $j=$i;
               while ($j < $l)
               {
-                if ($code{$j}=="\\")//escape \\
-                  $j++;
-                else if ($code{$j}=='"')
-                {
-                  $this->close_state=$this->state;
+                if ($code{$j}=='"')
                   break;
-                 }
                 $j++;
               }
+              $this->close_state=$this->state;
               $out.=substr($code, $i, $j - $i + 1);
               $i=$j;
               break;

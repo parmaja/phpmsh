@@ -3,13 +3,13 @@
 
   Copyright (C) 2004  zaher dirkey (zaher@parmaja.com)
 
-  This file is part of phpMultiSyn.
+  This file is part of phpMSH.
 
-  phpMultiSyn is free software; you can redistribute it and/or modify it
+   is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published
   by the Free Software Foundation;
 
-  phpMultiSyn is distributed in the hope that it will be useful, but
+   is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -27,7 +27,7 @@ function get_class_syn($ext)
   if (!class_exists($syn_class))
   {
     include_once(dirname(__FILE__).'/classes.php');
-    $ext_file=dirname(__FILE__).'/codes/'.$ext.'.php';
+    $ext_file=dirname(__FILE__).'/languages/'.$ext.'.php';
     if (file_exists($ext_file))
       include_once($ext_file);
     else

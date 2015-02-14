@@ -3,13 +3,13 @@
 
   Copyright (C) 2004  zaher dirkey (zaher@parmaja.com)
 
-  This file is part of phpMultiSyn.
+  This file is part of .
 
-  phpMultiSyn is free software; you can redistribute it and/or modify it
+   is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published
   by the Free Software Foundation;
 
-  phpMultiSyn is distributed in the hope that it will be useful, but
+   is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -25,7 +25,7 @@
 
 ************************************************************************/
 
-  class vb_syn extends plain_code_syn
+  class vbscript_syn extends plain_code_syn
   {
     var $keywords;
     function initialize(){
@@ -377,6 +377,13 @@
             $i++;
             $i++;
           }
+          else if ($ch=='/' and $next_ch=='*')
+          {
+            $this->state=S_COMMENT2;
+            $out=$ch.$next_ch;
+            $i++;
+            $i++;
+          }
           else if ($ch=='"')
           {
             $this->state=S_STRING;
@@ -402,31 +409,29 @@
           switch ($this->state)
           {
             case S_COMMENT1:
-            $j = strpos($code,"\n",$i);
-            if ($j===false)
-              $j=$l-1;
-            else
-              $this->close_state=$this->state;
-              $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
-               break;
-            case S_KEYWORD:
             {
-              $this->process_std_identifier($i, $l, $code, $this->keywords, $out, false);
+              $this->process_std_line_comment($i, $l, $code, $out);
               break;
             }
+            case S_COMMENT2:
+              $j=strpos($code,'*/',$i);
+              if ($j===false)
+                $j = $l - 1;
+              else
+                $this->close_state=$this->state;
+              $out.=substr($code, $i, $j + 1 - $i + 1);
+              $i=$j + 1;
+              break;
+
             case S_STRING:
             {
-              $j = $i;
-              while ($j < $l)
-              {
-                if ($code{$j}=='"')
-                  break;
-                $j++;
-              }
-              $this->close_state=$this->state;
-              $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
+              $this->process_std_double_quotes($i, $l, $code, $out);
+              break;
+            }
+
+            case S_KEYWORD:
+            {
+              $this->process_std_identifier($i, $l, $code, $keywords, $out, false);
               break;
             }
           }

@@ -3,13 +3,13 @@
 
   Copyright (C) 2004  zaher dirkey (zaher@parmaja.com)
 
-  This file is part of phpMultiSyn.
+  This file is part of .
 
-  phpMultiSyn is free software; you can redistribute it and/or modify it
+   is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published
   by the Free Software Foundation;
 
-  phpMultiSyn is distributed in the hope that it will be useful, but
+   is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -21,176 +21,99 @@
 
 ************************************************************************
 
-  This syntax class writen by "REGIS SCHWARTZ"  <http://pbadonf.monforum.net>
+  This syntax class writen by Zaher Dirkey zaher@parmaja.com
 
 ************************************************************************/
 
-  class pb_syn extends plain_code_syn
+  class cpp_syn extends plain_code_syn
   {
-    var $datatypes;
+    var $directives;
     var $keywords;
     function initialize(){
-    
-     // V1 : dataypes = keywords 
-    
-    $this->datatypes = new keywords(false, array(
-      'Blob',
-      'Boolean',
-      'Byte',
-      'Char',
-      'Character',
-      'Date',
-      'DateTime',
-      'Dec',
-      'Decimal',
-      'Double',
-      'Int',
-      'Integer',
-      'Long',
-      'LongLong',
-      'Real',
-      'String',
-      'Time',
-      'UInt',
-      'ULong',
-      'UnsignedInt',
-      'UnsignedInteger',
-      'UnsignedLong'
-          )
-    );
-*/
+
     $this->keywords = new keywords(false, array(
-    
-    // V1 : dataypes = keywords ------------------------------------------
-      'blob',
-      'boolean',
-      'byte',
-      'char',
-      'character',
-      'date',
-      'datetime',
-      'dec',
-      'decimal',
-      'double',
-      'int',
-      'integer',
-      'long',
-      'longlong',
-      'real',
-      'string',
-      'time',
-      'uint',
-      'ulong',
-      'unsignedint',
-      'unsignedinteger',
-      'unsignedlong',
-     //------------------------------------------ 
-      'alias',
+      'define',
+      'elif',
+      'endif',
+      'error',
+      'ifdef',
+      'ifndef',
+      'include',
+      'line',
+      'pragma',
+      'undef',
       'and',
-      'autoinstantiate',
-      'call',
+      'and_eq',
+      'asm',
+      'auto',
+      'bitand',
+      'bitor',
+      'bool',
+      'break',
       'case',
       'catch',
-      'choose',
-      'close',
-      'commit',
-      'connect',
-      'constant',
+      'char',
+      'class',
+      'compl',
+      'const',
+      'const_cast',
       'continue',
-      'create',
-      'cursor',
-      'declare',
+      'default',
       'delete',
-      'describe',
-      'descriptor',
-      'destroy',
-      'disconnect',
       'do',
-      'dynamic',
+      'double',
+      'dynamic_cast',
       'else',
-      'elseif',
-      'end',
-      'enumerated',
-      'event',
-      'execute',
-      'exit',
-      'external',
+      'enum',
+      'explicit',
+      'export',
+      'extern',
       'false',
-      'fetch',
-      'finally',
-      'first',
+      'float',
       'for',
-      'forward',
-      'from',
-      'function',
-      'global',
+      'friend',
       'goto',
-      'halt',
       'if',
-      'immediate',
-      'indirect',
-      'insert',
-      'into',
-      'intrinsic',
-      'is',
-      'last',
-      'library',
-      'loop',
-      'native',
-      'next',
+      'inline',
+      'int',
+      'long',
+      'mutable',
+      'namespace',
+      'new',
       'not',
-      'of',
-      'on',
-      'open',
+      'not_eq',
+      'operator',
       'or',
-      'parent',
-      'post',
-      'prepare',
-      'prior',
+      'or_eq',
       'private',
-      'privateread',
-      'privatewrite',
-      'procedure',
       'protected',
-      'protectedread',
-      'protectedwrite',
-      'prototypes',
       'public',
-      'readonly',
-      'ref',
+      'register',
+      'reinterpret_cast',
       'return',
-      'rollback',
-      'rpcfunc',
-      'select',
-      'selectblob',
-      'shared',
+      'short',
+      'signed',
+      'sizeof',
       'static',
-      'step',
-      'subroutine',
-      'super',
-      'system',
-      'systemread',
-      'systemwrite',
-      'then',
+      'static_cast',
+      'struct',
+      'switch',
+      'template',
       'this',
       'throw',
-      'throws',
-      'to',
-      'trigger',
       'true',
       'try',
-      'type',
-      'until',
-      'update',
-      'updateblob',
+      'typedef',
+      'typeid',
+      'typename',
+      'union',
+      'unsigned',
       'using',
-      'variables',
-      'where',
+      'virtual',
+      'void',
+      'volatile',
       'while',
-      'with',
-      'within',
-      '_debug'
-      )
+      'xor'
       );
     }
 
@@ -228,6 +151,12 @@
           else if (is_identifier_open($ch))
           {
             $this->state = S_KEYWORD;
+            $out = $ch;
+            $i++;
+          }
+          else if ($ch=='#')
+          {
+            $this->state = S_DIRECTIVE;
             $out = $ch;
             $i++;
           }
@@ -279,13 +208,7 @@
               $this->process_std_identifier($i, $l, $code, $this->keywords, $out);
               break;
             }
-            
-           case S_DATATYPE:
-            {
-              $this->process_std_identifier($i, $l, $code, $this->datatypes, $out);
-              break;
-            }
-            
+
             case S_STRING:
             {
               $j=$i;
