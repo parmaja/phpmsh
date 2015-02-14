@@ -3,7 +3,7 @@
 <html dir="ltr">
 <head>
 <meta http-equiv="Content-Language" content="en-us" />
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="../msh_light.css" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Multi Syntax Highlighter Samples</title>

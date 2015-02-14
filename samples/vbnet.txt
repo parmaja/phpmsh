@@ -1,4 +1,4 @@
-Public Class Form1
+๏ปฟPublic Class Form1
     Inherits System.Windows.Forms.Form
     '1***********************************
  #Region " Windows Form Designer generated code"
@@ -133,34 +133,34 @@ Private Sub CopyData(ByVal FromStream As Stream, ByVal ToStream As Stream)
 Option Strict On
 WithEvents
 
- 'ใิํฯ วแ฿ๆไสัๆแ
+ 'ู…ุดูุฏ ุงููููุชุฑูู
     Public Sub New()
-        'วำสฯฺวม ใิํฯ วแีไÝ วแรำวำ Ýํ วแศฯวํษ
+        'ุงุณุชุฏุนุงุก ู…ุดูุฏ ุงูุตูู ุงูุฃุณุงุณ ูู ุงูุจุฏุงูุฉ
         MyBase.New()
 
         Dim i, j As Integer
         Dim InternalTable As New DataTable
         Dim TblRow As DataRowView
-        'ศไวม รฺใฯษ วแฬฯๆแ วแฯวฮแํ ๆÝÞ วแศไํษ วแใุแๆศษ
+        'ุจูุงุก ุฃุนู…ุฏุฉ ุงูุฌุฏูู ุงูุฏุงุฎูู ููู ุงูุจููุฉ ุงูู…ุทููุจุฉ
         For i = 0 To Cols - 1
             InternalTable.Columns.Add("Col" & i.ToString, GetType(String))
         Next
-        ' สÛแํÝ วแ฿วฦไ (ฬฯๆแ ศํวไวส)ศวแ฿วฦไ (ใำสฺัึ ศํวไวส)แอแ ใิ฿แษ ลึวÝษ ำุั ฬฯํฯ ๆÞส วแสิÛํแ
+        ' ุชุบููู ุงููุงุฆู (ุฌุฏูู ุจูุงูุงุช)ุจุงููุงุฆู (ู…ุณุชุนุฑุถ ุจูุงูุงุช)ูุญู ู…ุดููุฉ ุฅุถุงูุฉ ุณุทุฑ ุฌุฏูุฏ ููุช ุงูุชุดุบูู
         InternalView = New DataView(InternalTable)
-        'ศไวม รฺใฯษ ใำสฺัึ วแศํวไวส ๆÝÞ วแศไํษ วแใุแๆศษ
+        'ุจูุงุก ุฃุนู…ุฏุฉ ู…ุณุชุนุฑุถ ุงูุจูุงูุงุช ููู ุงูุจููุฉ ุงูู…ุทููุจุฉ
         For j = 0 To IRows - 1
             TblRow = InternalView.AddNew
             For i = 0 To ICols - 1
                 TblRow.Item(i) = ""
             Next
         Next
-        'แแำใวอ แแใำสฮฯใ ศฺใแํษ สอัํั วแฮแวํว
+        'ููุณู…ุงุญ ููู…ุณุชุฎุฏู… ุจุนู…ููุฉ ุชุญุฑูุฑ ุงูุฎูุงูุง
         InternalView.AllowEdit = True
-        'ฺฯใ วแำใวอ ศลึวÝษ ำุั ฬฯํฯ ศิ฿แ สแÞวฦํ
+        'ุนุฏู… ุงูุณู…ุงุญ ุจุฅุถุงูุฉ ุณุทุฑ ุฌุฏูุฏ ุจุดูู ุชููุงุฆู
         InternalView.AllowNew = False
-        'วำไวฯ ศไํษ วแสฮาํไ วแฯวฮแํษ แแฮแวํว วแ์ วแ฿ๆไสัๆแ วแใิสÞ
+        'ุงุณูุงุฏ ุจููุฉ ุงูุชุฎุฒูู ุงูุฏุงุฎููุฉ ููุฎูุงูุง ุงูู ุงููููุชุฑูู ุงูู…ุดุชู
         Me.DataSource = InternalView
-        ' สฬๅํา รศฺวฯ วแ฿ๆไสัๆแ ศิ฿แ ลÝสัวึํ ๆÞส วแสีใํใ
+        ' ุชุฌููุฒ ุฃุจุนุงุฏ ุงููููุชุฑูู ุจุดูู ุฅูุชุฑุงุถู ููุช ุงูุชุตู…ูู…
         Me.Width = 360
         Me.Height = 160
     End Sub
@@ -174,14 +174,14 @@ WithEvents
                 MsgBox("The Number of Rows must be greater than zero", MsgBoxStyle.Critical, "Error")
                 Exit Property
             End If
-            'ำํสใ วำสฯฺวม สวศฺ ศวไํ วแ฿ๆไสัๆแ ÝÞุ
-            'Ýํ อวแ สÛํั ฺฯฯ วแรำุั
+            'ุณูุชู… ุงุณุชุฏุนุงุก ุชุงุจุน ุจุงูู ุงููููุชุฑูู ููุท
+            'ูู ุญุงู ุชุบูุฑ ุนุฏุฏ ุงูุฃุณุทุฑ
             If IRows <> Value Then
-                'วแวอสÝวู ศวแÞํใษ วแÞฯํใษ แฺฯฯ วแรำุั
+                'ุงูุงุญุชูุงุธ ุจุงูููู…ุฉ ุงููุฏูู…ุฉ ูุนุฏุฏ ุงูุฃุณุทุฑ
                 OldRows = IRows
-                'วำไวฯ วแÞํใษ วแฬฯํฯษ
+                'ุงุณูุงุฏ ุงูููู…ุฉ ุงูุฌุฏูุฏุฉ
                 IRows = Value
-                'วำสฯฺวม ศวไํ วแ฿ๆไสัๆแ
+                'ุงุณุชุฏุนุงุก ุจุงูู ุงููููุชุฑูู
                 PrepareFlexGrid(IRows, ICols)
             End If
         End Set
