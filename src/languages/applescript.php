@@ -13,7 +13,6 @@
 
   class applescript_syn extends plain_code_syn
   {
-    var $keywords;
     function initialize(){
       $this->keywords = new keywords(false, array(
         'if',

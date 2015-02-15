@@ -9,7 +9,6 @@
 
   class sql_syn extends highlight_source_syn
   {
-    var $keywords;
     function initialize(){
     $this->keywords = new keywords(false, array(
     'active',

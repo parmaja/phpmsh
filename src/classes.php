@@ -389,7 +389,7 @@ abstract class highlight_source_syn extends plain_source_syn
               $i++;
             $token = substr($source, $index, $i - $index);
 
-            if ($this->close_state == S_IDENTIFIER)
+            if ($this->keywords && $this->close_state == S_IDENTIFIER)
             {
                 if ($this->keywords->exists($token)) {
                     $this->open_state  = S_KEYWORD;

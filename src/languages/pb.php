@@ -10,7 +10,6 @@
   class pb_syn extends plain_code_syn
   {
     var $datatypes;
-    var $keywords;
     function initialize(){
     
      // V1 : dataypes = keywords 
