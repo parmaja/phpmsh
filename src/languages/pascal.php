@@ -104,7 +104,9 @@
                 $this->flag = 1;
                 $this->state = S_ML_COMMENT;
             } else if (cmp($line, '$', $i)) {
-                $this->state = S_VARIABLE;
+                $this->state = S_NUMBER;
+            } else if (cmp($line, '#', $i)) {
+                $this->state = S_OBJECT;
             } else if (cmp($line, "'", $i)) {
                 $this->state = S_SQ_STRING;
             } else if (cmp($line, '"', $i)) {
@@ -137,6 +139,14 @@
                 break;
 
             case S_IDENTIFIER:
+                $this->do_IDENTIFIER($line, $i);
+                break;
+
+            case S_OBJECT:
+                $this->do_IDENTIFIER($line, $i);
+                break;
+
+            case S_NUMBER:
                 $this->do_IDENTIFIER($line, $i);
                 break;
 

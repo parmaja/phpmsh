@@ -11,7 +11,7 @@
 <body>
 <?php
 include '../src/functions.php';
-$dir = "../sample/";
+$dir = "../samples/";
 if ($dh = opendir($dir)) {
     while (($file = readdir($dh)) !== false) {
         if (!is_dir($file)) {
