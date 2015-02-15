@@ -195,14 +195,14 @@
 
           if ($ch=='/' and $next_ch=='/')
           {
-            $this->state=S_COMMENT1;
+            $this->state=S_SL_COMMENT;
             $out=$ch.$next_ch;
             $i++;
             $i++;
           }
           else if ($ch=='/' and $next_ch=='*')
           {
-            $this->state=S_COMMENT2;
+            $this->state=S_ML_COMMENT;
             $out=$ch.$next_ch;
             $i++;
             $i++;
@@ -221,7 +221,7 @@
           }
           else if ($ch=='"')
           {
-            $this->state=S_STRING2;
+            $this->state=S_DQ_STRING;
             $out=$ch;
             $i++;
           }
@@ -237,7 +237,7 @@
         {
           switch ($this->state)
           {
-            case S_COMMENT1:
+            case S_SL_COMMENT:
               $j=strpos($code,"\n",$i);
               if ($j===false)
                 $j=$l-1;
@@ -246,7 +246,7 @@
               $out.=substr($code, $i, $j - $i + 1);
               $i=$j;
               break;
-            case S_COMMENT2:
+            case S_ML_COMMENT:
               $j=strpos($code,'*/',$i);
               if ($j===false)
                 $j = $l - 1;
@@ -286,7 +286,7 @@
               $i=$j;
               break;
             }
-            case S_STRING2:
+            case S_DQ_STRING:
             {
               $j = $i;
               while ($j < $l)

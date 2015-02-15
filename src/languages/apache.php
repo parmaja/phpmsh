@@ -10,7 +10,6 @@
 
   class apache_syn extends plain_code_syn
   {
-    var $keywords;
     function initialize(){
       $this->keywords = new keywords(false, array(
         'ServerRoot',
@@ -81,146 +80,136 @@
       );
     }
 
-    function highlight(&$code)
+    function do_highlight(&$code, &$i)
     {
-      $ch = '';
-      $next_ch = '';
-      $l=strlen($code);
-      $out='';
-      $i=0;
-      while ($i < $l)
+      if ($this->state==S_NONE)
       {
-        if ($this->state==S_NONE)
-        {
-          $ch = $code{$i};
-          if ($i+1 < $l)
-            $next_ch = $code{$i+1};
-          else
-            $next_ch = '';
-          if ($ch=='#')
-          {
-            $this->state=S_COMMENT1;
-            $out=$ch;
-            $i++;
-          }
-          else if (is_identifier_open($ch))
-          {
-            $this->state=S_KEYWORD;
-            $out=$ch;
-            $i++;
-         }
-          else if ($ch=='\'')
-          {
-            $this->state=S_STRING;
-            $out=$ch;
-            $i++;
-          }
-          else if ($ch=='"')
-          {
-            $this->state=S_STRING2;
-            $out=$ch;
-            $i++;
-          }
-         else if ($ch=='<')
-        {
-            $this->state=S_OBJECT;
-            $out=$ch;
-            $i++;
-          }
-          else
-          {
-            $out=$ch;
-          }
-          $this->open_state=$this->state;
-          $this->close_state=S_NONE;
-        }
+        $ch = $code{$i};
+        if ($i+1 < $l)
+          $next_ch = $code{$i+1};
+        else
+          $next_ch = '';
 
-        if ($this->state!=S_NONE)
+        if ($ch=='#')
         {
-          switch ($this->state)
+          $this->state=S_SL_COMMENT;
+          $out=$ch;
+          $i++;
+        }
+        else if (is_identifier_open($ch))
+        {
+          $this->state=S_KEYWORD;
+          $out=$ch;
+          $i++;
+        }
+        else if ($ch=='\'')
+        {
+          $this->state=S_STRING;
+          $out=$ch;
+          $i++;
+        }
+        else if ($ch=='"')
+        {
+          $this->state=S_DQ_STRING;
+          $out=$ch;
+          $i++;
+        }
+        else if ($ch=='<')
+        {
+          $this->state=S_OBJECT;
+          $out=$ch;
+          $i++;
+        }
+        else
+        {
+          $out=$ch;
+        }
+        $this->open_state=$this->state;
+        $this->close_state=S_NONE;
+      }
+
+      if ($this->state!=S_NONE)
+      {
+        switch ($this->state)
+        {
+          case S_SL_COMMENT:
+            $j=strpos($code,"\n",$i);
+            if ($j===false)
+              $j=$l-1;
+            else
+              $this->close_state=$this->state;
+            $out.=substr($code, $i, $j - $i + 1);
+            $i=$j;
+            break;
+          case S_KEYWORD:
           {
-            case S_COMMENT1:
-              $j=strpos($code,"\n",$i);
-              if ($j===false)
-                $j=$l-1;
-              else
+            $j=$i;
+            while ($j < $l)
+            {
+              if (!is_identifier($code{$j}))
+                break;
+              $j++;
+            }
+            $this->close_state=$this->state;//close if string breaked
+            $out.=substr($code, $i, $j - $i);
+            $i=$j - 1;
+            if (!$this->keywords->found($out))
+            {
+              $this->state=S_NONE;
+              $this->open_state=S_NONE;
+              $this->close_state=S_NONE;
+            }
+            break;
+          }
+          case S_OBJECT:
+          {
+            $j=$i;
+            while ($j < $l)
+            {
+              if ($code{$j}=='>')
+              {
                 $this->close_state=$this->state;
-              $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
-              break;
-            case S_KEYWORD:
-            {
-              $j=$i;
-              while ($j < $l)
-              {
-                if (!is_identifier($code{$j}))
-                  break;
-                $j++;
+                break;
               }
-              $this->close_state=$this->state;//close if string breaked
-              $out.=substr($code, $i, $j - $i);
-              $i=$j - 1;
-              if (!$this->keywords->found($out))
-              {
-                $this->state=S_NONE;
-                $this->open_state=S_NONE;
-                $this->close_state=S_NONE;
-              }
-              break;
+              $j++;
             }
-            case S_OBJECT:
+            $out.=substr($code, $i, $j - $i + 1);
+            $i=$j;
+            break;
+          }
+          case S_STRING:
+          {
+            $j=$i;
+            while ($j < $l)
             {
-              $j=$i;
-              while ($j < $l)
+              if ($code{$j}=='\'' or $code{$j}=="\n")
               {
-                if ($code{$j}=='>')
-                {
-                  $this->close_state=$this->state;
-                  break;
-                }
-                $j++;
+                $this->close_state=$this->state;
+                break;
               }
-              $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
-              break;
+              $j++;
             }
-            case S_STRING:
+            $out.=substr($code, $i, $j - $i + 1);
+            $i=$j;
+            break;
+          }
+          case S_DQ_STRING:
+          {
+            $j=$i;
+            while ($j < $l)
             {
-              $j=$i;
-              while ($j < $l)
+              if ($code{$j}=='"' or $code{$j}=="\n")
               {
-                if ($code{$j}=='\'' or $code{$j}=="\n")
-                {
-                  $this->close_state=$this->state;
-                  break;
-                }
-                $j++;
-              }
-              $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
-              break;
+                $this->close_state=$this->state;
+                break;
+               }
+              $j++;
             }
-            case S_STRING2:
-            {
-              $j=$i;
-              while ($j < $l)
-              {
-                if ($code{$j}=='"' or $code{$j}=="\n")
-                {
-                  $this->close_state=$this->state;
-                  break;
-                 }
-                $j++;
-              }
-              $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
-              break;
-            }
+            $out.=substr($code, $i, $j - $i + 1);
+            $i=$j;
+            break;
           }
         }
-
-        $this->text_out($out);
-        $i++;
       }
     }
   }

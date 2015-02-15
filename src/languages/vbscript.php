@@ -354,14 +354,14 @@
             $next_ch = '';
           if ($ch=="'")
           {
-            $this->state=S_COMMENT1;
+            $this->state=S_SL_COMMENT;
             $out = $ch.$next_ch;
             $i++;
             $i++;
           }
           else if ($ch=='/' and $next_ch=='*')
           {
-            $this->state=S_COMMENT2;
+            $this->state=S_ML_COMMENT;
             $out=$ch.$next_ch;
             $i++;
             $i++;
@@ -390,12 +390,12 @@
         {
           switch ($this->state)
           {
-            case S_COMMENT1:
+            case S_SL_COMMENT:
             {
               $this->process_std_line_comment($i, $l, $code, $out);
               break;
             }
-            case S_COMMENT2:
+            case S_ML_COMMENT:
               $j=strpos($code,'*/',$i);
               if ($j===false)
                 $j = $l - 1;

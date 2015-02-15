@@ -354,7 +354,7 @@
             $next_ch = '';
           if ($ch=="'")
           {
-            $this->state=S_COMMENT1;
+            $this->state=S_SL_COMMENT;
             $out = $ch.$next_ch;
             $i++;
             $i++;
@@ -383,7 +383,7 @@
         {
           switch ($this->state)
           {
-            case S_COMMENT1:
+            case S_SL_COMMENT:
             $j = strpos($code,"\n",$i);
             if ($j===false)
               $j=$l-1;

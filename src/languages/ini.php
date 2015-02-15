@@ -31,7 +31,7 @@
 
           if ($ch=='#' or $ch==';')
           {
-            $this->state=S_COMMENT1;
+            $this->state=S_SL_COMMENT;
             $out=$ch;
             $i++;
           }
@@ -49,7 +49,7 @@
           }
           else if ($ch=='"')
           {
-            $this->state=S_STRING2;
+            $this->state=S_DQ_STRING;
             $out=$ch;
             $i++;
           }
@@ -71,7 +71,7 @@
         {
           switch ($this->state)
           {
-            case S_COMMENT1:
+            case S_SL_COMMENT:
               $j=strpos($code,"\n",$i);
               if ($j===false)
                 $j=$l-1;
@@ -140,7 +140,7 @@
               $i=$j;
               break;
             }
-            case S_STRING2:
+            case S_DQ_STRING:
             {
               $j=$i;
               while ($j < $l)
