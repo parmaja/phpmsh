@@ -139,7 +139,7 @@ class plain_source_syn
 {
     var $output;
     var $styles;
-    var $tag = 0;
+    var $flag = 0;
     var $sub_state = S_NONE;
     var $state = S_NONE;
     var $open_state = S_NONE;
@@ -282,9 +282,9 @@ class plain_source_syn
         $i = $j;
     }
 
-    function do_ML_COMMENT(&$line, &$i)
+    function do_ML_COMMENT(&$line, &$i, $close = '*/')
     {
-        $j = strpos($line, '*/', $i);
+        $j = strpos($line, $close, $i);
         if ($j === false)
             $j = strlen($line) - 1;
         else
@@ -303,7 +303,7 @@ class plain_source_syn
         }
     }
 
-    function do_SQ_STRING(&$line, &$i)
+    function do_SQ_STRING(&$line, &$i, $ml = true) //ml : multi line
     {
         while ($i < strlen($line)) {
             if (($line{$i} == "\\") and ($i + 1) < strlen($line) and (($line{$i + 1} == '"') or ($line{$i + 1} == '\'')))
@@ -315,10 +315,12 @@ class plain_source_syn
             }
             $i++;
         }
+        if (!$ml)
+          $this->close_state = $this->state;
     }
 
 
-    function do_DQ_STRING(&$line, &$i)
+    function do_DQ_STRING(&$line, &$i, $ml = true)
     {
       while ($i < strlen($line)) {
           if ($line{$i} == "\\") //escape \\
@@ -330,6 +332,8 @@ class plain_source_syn
           }
           $i++;
       }
+      if (!$ml)
+        $this->close_state = $this->state;
     }
 
     function do_SYMBOL(&$line, &$i){
@@ -344,19 +348,6 @@ class plain_source_syn
             $i++;
         }
         $this->close_state = $this->state;
-    }
-
-    function highlight_line(&$line)
-    {
-        $this->output = new variable_output;
-        //because we can proceess the source as chunks so the hilighter wait a "\n" to end the line.
-        //source must have EOL if not we add it
-        if (substr($line, -1, 1) <> "\n")
-            $line = $line . "\n";
-        $this->highlight($line);
-        $result = $this->output->result;
-        unset($this->output);
-        return $result;
     }
 
     function highlight_file($file)
@@ -410,7 +401,7 @@ abstract class highlight_source_syn extends plain_source_syn
 
             if ($this->close_state != S_NONE)
             {
-                $this->tag = 0;
+                $this->flag = 0;
                 $this->state = $this->next_state;
                 $this->open_state = $this->state;
                 $this->close_state = S_NONE;
