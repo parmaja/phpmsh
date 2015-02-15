@@ -7,7 +7,7 @@
  *
  */
 
-class php_syn extends highlight_code_syn
+class php_syn extends highlight_source_syn
 {
     var $keywords;
     function initialize()
@@ -72,22 +72,22 @@ class php_syn extends highlight_code_syn
         ));
     }
 
-    function do_open(&$code, &$i)
+    function do_open(&$line, &$i)
     {
         if ($this->state == S_NONE) {
-            if (cmp($code, '#', $i)) {
+            if (cmp($line, '#', $i)) {
                 $this->state = S_SL_COMMENT;
-            } else if (cmp($code, '//', $i)) {
+            } else if (cmp($line, '//', $i)) {
                 $this->state = S_SL_COMMENT;
-            } else if (cmp($code, '/*', $i)) {
+            } else if (cmp($line, '/*', $i)) {
                 $this->state = S_ML_COMMENT;
-            } else if (cmp($code, '$', $i)) {
+            } else if (cmp($line, '$', $i)) {
                 $this->state = S_VARIABLE;
-            } else if (cmp($code, '\'', $i)) {
+            } else if (cmp($line, '\'', $i)) {
                 $this->state = S_STRING;
-            } else if (cmp($code, '\"', $i)) {
+            } else if (cmp($line, '\"', $i)) {
                 $this->state = S_DQ_STRING;
-            } else if (is_identifier_open($code{$i})) {
+            } else if (is_identifier_open($line{$i})) {
                 $this->state = S_IDENTIFIER;
                 $i++;
             }
@@ -95,71 +95,32 @@ class php_syn extends highlight_code_syn
         return $this->state != S_NONE;
     }
 
-    function do_scan(&$code, &$i)
+    function do_scan(&$line, &$i)
     {
         switch ($this->state)
         {
             case S_SL_COMMENT:
-                $j = strpos($code, "\n", $i);
-                if ($j === false)
-                    $j = strlen($code) - 1;
-                else
-                    $this->close_state = $this->state;
-                $i = $j;
+                $this->do_SL_COMMENT($line, $i);
                 break;
 
             case S_ML_COMMENT:
-                $j = strpos($code, '*/', $i);
-                if ($j === false)
-                    $j = strlen($code) - 1;
-                else
-                    $this->close_state = $this->state;
-                $i = $j + 1;
+                $this->do_ML_COMMENT($line, $i);
                 break;
 
-            case S_IDENTIFIER: {
-                while ($i < strlen($code)) {
-                    if (!is_identifier($code{$i}))
-                        break;
-                    $i++;
-                }
-                $this->close_state = $this->state; //close if string breaked
+            case S_IDENTIFIER:
+                $this->do_IDENTIFIER($line, $i);
+                break;
 
+            case S_VARIABLE:
+                $this->do_IDENTIFIER($line, $i);
                 break;
-            }
-            case S_VARIABLE: {
-                while ($i < strlen($code)) {
-                    if ((!is_identifier($code{$i})))
-                        break;
-                    $i++;
-                }
-                $this->close_state = $this->state;
+
+            case S_STRING:
+                $this->do_SQ_STRING($line, $i);
                 break;
-            }
-            case S_STRING: {
-                while ($i < strlen($code)) {
-                    if (($code{$i} == "\\") and ($i + 1) < strlen($code) and (($code{$i + 1} == '"') or ($code{$i + 1} == '\'')))
-                        $i++;
-                    else if ($code{$i} == '\'') {
-                        $this->close_state = $this->state;
-                        $i++;//include close quotation
-                        break;
-                    }
-                    $i++;
-                }
-                break;
-            }
+
             case S_DQ_STRING:
-              while ($i < strlen($code)) {
-                  if ($code{$i} == "\\") //escape \\
-                      $i++;
-                  else if ($code{$i} == '"') {
-                      $this->close_state = $this->state;
-                      $i++;//include close quotation
-                      break;
-                  }
-                  $i++;
-              }
+              $this->do_DQ_STRING($line, $i);
               break;
         }
     }

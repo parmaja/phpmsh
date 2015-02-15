@@ -25,12 +25,12 @@
   font-weight: bold;
 }
 
-.syn_string {
+.syn_sq_string {
   color:#9ecc91;
   font-weight: bold;
 }
 
-.syn_string2 {
+.syn_dq_string {
   color:#a6ce9f;
   font-weight: bold;
 }
@@ -45,18 +45,13 @@
   font-weight: bold;
 }
 
-.syn_comment1 {
+.syn_sl_comment {
   color:#a3a5a3;
   font-weight: bold;
 }
 
-.syn_comment2 {
+.syn_ml_comment {
   color:#a3a5a3;
-  font-weight: bold;
-}
-
-.syn_comment3 {
-  color: #a3a5a3;
   font-weight: bold;
 }
 

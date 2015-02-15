@@ -42,25 +42,25 @@ function cmp($text, $str, &$index)
 
 class echo_output
 {
-    function write(&$code)
+    function write(&$source)
     {
-        echo $code;
+        echo $source;
     }
 }
 
 class variable_output
 {
     var $result = '';
-    function write(&$code)
+    function write(&$source)
     {
-        $this->result = $this->result . $code;
+        $this->result = $this->result . $source;
     }
 }
 
 class file_output
 {
     var $file;
-    function write(&$code)
+    function write(&$source)
     {
     }
 }
@@ -129,7 +129,7 @@ $cache_syn_objects = array();
 
 //base class for all syn classes, or the plain class
 
-class plain_code_syn
+class plain_source_syn
 {
     var $output;
     var $styles;
@@ -142,7 +142,7 @@ class plain_code_syn
     var $gatter_with = 10;
     var $gatter_start = 1;*/
 
-    function plain_code_syn()
+    function plain_source_syn()
     {
         $this->styles = array(
             S_KEYWORD => array(
@@ -158,11 +158,11 @@ class plain_code_syn
                 '</span>'
             ),
             S_STRING => array(
-                '<span class="syn_string">',
+                '<span class="syn_sq_string">',
                 '</span>'
             ),
             S_DQ_STRING => array(
-                '<span class="syn_string2">',
+                '<span class="syn_dq_string">',
                 '</span>'
             ),
             S_SYMBOL => array(
@@ -178,11 +178,11 @@ class plain_code_syn
                 '</span>'
             ),
             S_SL_COMMENT => array(
-                '<span class="syn_comment1">',
+                '<span class="syn_sl_comment">',
                 '</span>'
             ),
             S_ML_COMMENT => array(
-                '<span class="syn_comment2">',
+                '<span class="syn_ml_comment">',
                 '</span>'
             ),
             S_DIRECTIVE => array(
@@ -207,102 +207,119 @@ class plain_code_syn
             $this->initialize();
     }
 
-    function format_out(&$out)
+    function format_out(&$token)
     {
-        $result = htmlspecialchars($out);
+        $result = htmlspecialchars($token);
         return str_replace("\t", $this->spaces, $result);
     }
 
-    function internal_echo(&$out)
+    function internal_echo(&$token)
     {
         if (isset($this->output))
-            $this->output->write($out);
+            $this->output->write($token);
         else
-            echo $out;
+            echo $token;
     }
 
-    function text_out(&$out)
+    function text_out(&$token)
     {
-      $out = $this->format_out($out);
+      $token = $this->format_out($token);
 
       if ($this->open_state != S_NONE)
-        $out = $this->styles[$this->open_state][0] . $out;
+        $token = $this->styles[$this->open_state][0] . $token;
 
       if ($this->close_state != S_NONE)
-        $out = $out . $this->styles[$this->close_state][1];
+        $token = $token . $this->styles[$this->close_state][1];
  /*
         if ($this->open_state != S_NONE) {
-            $out              = $this->styles[$this->open_state][0] . $out;
+            $token              = $this->styles[$this->open_state][0] . $token;
             $this->open_state = S_NONE;
         }
 
         if ($this->close_state != S_NONE) {
-            $out              = $out . $this->styles[$this->close_state][1];
+            $token              = $token . $this->styles[$this->close_state][1];
             $this->open_state = S_NONE;
             $this->state      = S_NONE;
         }
 */
 
-        $this->internal_echo($out);
-        $out = '';
+        $this->internal_echo($token);
+        $token = '';
     }
 
-    function highlight(&$code) //virtual
+    function highlight(&$line) //virtual
     {
-        $this->internal_echo($this->format_out($code)); //plain code
+        $this->internal_echo($this->format_out($line)); //plain source
     }
 
     //functions for helping standard languages
-    function process_std_line_comment(&$i, &$l, &$code, &$out)
+    function do_SL_COMMENT(&$line, &$i)
     {
-        $j = strpos($code, "\n", $i);
+        $j = strpos($line, "\n", $i);
         if ($j === false)
-            $j = $l - 1;
+            $j = strlen($line) - 1;
         else
             $this->close_state = $this->state;
-        $out .= substr($code, $i, $j - $i + 1);
         $i = $j;
     }
 
-    function process_std_double_quotes(&$i, &$l, &$code, &$out)
+    function do_ML_COMMENT(&$line, &$i)
     {
-        $j = $i;
-        while ($j < $l) {
-            if ($code{$j} == '"')
-                break;
-            $j++;
-        }
-        $this->close_state = $this->state;
-        $out .= substr($code, $i, $j - $i + 1);
-        $i = $j;
+        $j = strpos($line, '*/', $i);
+        if ($j === false)
+            $j = strlen($line) - 1;
+        else
+            $this->close_state = $this->state;
+        $i = $j + 1;
     }
 
-    function process_std_identifier(&$i, &$l, &$code, $keywords, &$out, $case_sensitive = true)
+    function do_SQ_STRING(&$line, &$i)
     {
-        $j = $i;
-        while ($j < $l) {
-            if (!is_identifier($code{$j}))
+        while ($i < strlen($line)) {
+            if (($line{$i} == "\\") and ($i + 1) < strlen($line) and (($line{$i + 1} == '"') or ($line{$i + 1} == '\'')))
+                $i++;
+            else if ($line{$i} == '\'') {
+                $this->close_state = $this->state;
+                $i++;//include close quotation
                 break;
-            $j++;
-        }
-        $this->close_state = $this->state;
-        $out .= substr($code, $i, $j - $i);
-        $i = $j - 1;
-        if (!$keywords->found($out)) {
-            $this->state       = S_NONE;
-            $this->open_state  = S_NONE;
-            $this->close_state = S_NONE;
+            }
+            $i++;
         }
     }
 
-    function highlight_code(&$code)
+
+    function do_DQ_STRING(&$line, &$i)
+    {
+      while ($i < strlen($line)) {
+          if ($line{$i} == "\\") //escape \\
+              $i++;
+          else if ($line{$i} == '"') {
+              $this->close_state = $this->state;
+              $i++;//include close quotation
+              break;
+          }
+          $i++;
+      }
+    }
+
+    function do_IDENTIFIER(&$line, &$i)
+    {
+        while ($i < strlen($line)) {
+            if (!is_identifier($line{$i}))
+                break;
+            $i++;
+        }
+        $this->close_state = $this->state;
+    }
+
+    function highlight_line(&$line)
     {
         $this->output = new variable_output;
-        //because we can proceess the code as chunks so the hilighter wait a "\n" to end the line.
-        //code must have EOL if not we add it
-        if (substr($code, -1, 1) <> "\n")
-            $code = $code . "\n";
-        $this->highlight($code);
+        //because we can proceess the source as chunks so the hilighter wait a "\n" to end the line.
+        //source must have EOL if not we add it
+        if (substr($line, -1, 1) <> "\n")
+            $line = $line . "\n";
+        $this->highlight($line);
         $result = $this->output->result;
         unset($this->output);
         return $result;
@@ -323,29 +340,29 @@ class plain_code_syn
     }
 }
 
-abstract class highlight_code_syn extends plain_code_syn
+abstract class highlight_source_syn extends plain_source_syn
 {
     var $keywords;
 
-    abstract function do_open(&$code, &$i);
-    abstract function do_scan(&$code, &$i);
+    abstract function do_open(&$source, &$i);
+    abstract function do_scan(&$source, &$i);
 
-    function highlight(&$code)
+    function highlight(&$source)
     {
-        $l       = strlen($code);
+        $l       = strlen($source);
         $index   = 0;
         while ($index < $l)
         {
             $i = $index;
             if ($this->state != S_NONE)
-              $this->do_scan($code, $i);
-            elseif ($this->do_open($code, $i)) {
+              $this->do_scan($source, $i);
+            elseif ($this->do_open($source, $i)) {
                 $this->open_state  = $this->state;
-                $this->do_scan($code, $i);
+                $this->do_scan($source, $i);
             }
             else
               $i++;
-            $token = substr($code, $index, $i - $index);
+            $token = substr($source, $index, $i - $index);
 
             if ($this->close_state == S_IDENTIFIER)
             {
