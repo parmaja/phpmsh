@@ -7,7 +7,7 @@
 *
 */
 
-  class sql_syn extends plain_code_syn
+  class sql_syn extends highlight_source_syn
   {
     var $keywords;
     function initialize(){
@@ -140,120 +140,56 @@
     'work')
   );
 }
-    function highlight(&$code)
+
+    function do_open(&$line, &$i)
     {
-      $ch = '';
-      $next_ch = '';
-      $l=strlen($code);
-      $out='';
-      $i=0;
-      while ($i < $l)
-      {
-        if ($this->state==S_NONE)
-        {
-          $ch = $code{$i};
-          if ($i+1 < $l)
-            $next_ch = $code{$i+1};
-          else
-            $next_ch = '';
-          if ($ch=='-' and $next_ch=='-')
-          {
-            $this->state=S_SL_COMMENT;
-            $out = $ch.$next_ch;
-            $i++;
-            $i++;
-          }
-          else if ($ch=='/' and $next_ch=='*')
-          {
-            $this->state=S_ML_COMMENT;
-            $out=$ch.$next_ch;
-            $i++;
-            $i++;
-          }
-          else if (is_identifier_open($ch))
-          {
-            $this->state=S_KEYWORD;
-            $out=$ch;
-            $i++;
-          }
-          else if ($ch=='\'')
-          {
-            $this->state=S_STRING;
-      $out=$ch;
-      $i++;
-          }
-          else
-          {
-            $out=$ch;
-          }
-    $this->open_state=$this->state;
-    $this->close_state=S_NONE;
-        }
-
-                          if ($this->state!=S_NONE)
-  {
-          switch ($this->state)
-          {
-            case S_SL_COMMENT:
-              $j=strpos($code,"\n",$i);
-              if ($j===false)
-                $j=$l-1;
-        else
-              $this->close_state=$this->state;
-              $out.=substr($code, $i, $j - $i + 1);
-              $i=$j;
-              break;
-            case S_ML_COMMENT:
-              $j=strpos($code,'*/',$i);
-              if ($j===false)
-                $j = $l - 1;
-        else
-                $this->close_state=$this->state;
-              $out.=substr($code, $i, $j + 1 - $i + 1);
-              $i=$j + 1;
-              break;
-            case S_KEYWORD:
-            {
-              $j= $i;
-              while ($j < $l)
-              {
-                if (!is_identifier($code{$j}))
-                  break;
-                $j++;
-              }
-              $this->close_state=$this->state;//close if string breaked
-              $out.=substr($code, $i, $j - $i);
-              $i=$j - 1;
-              if (!$this->keywords->found($out))
-                    {
-                      $this->state=S_NONE;
-                      $this->open_state=S_NONE;
-                      $this->close_state=S_NONE;
-                    }
-              break;
+        if ($this->state == S_NONE) {
+            if (cmp($line, '#', $i)) {
+                $this->state = S_DIRECTIVE;
+            } else if (cmp($line, '--', $i)) {
+                $this->state = S_SL_COMMENT;
+            } else if (cmp($line, '/*', $i)) {
+                $this->state = S_ML_COMMENT;
+            } else if (cmp($line, "'", $i)) {
+                $this->state = S_SQ_STRING;
+            } else if (cmp($line, '"', $i)) {
+                $this->state = S_DQ_STRING;
+            } else if (is_identifier_open($line{$i})) {
+                $this->state = S_IDENTIFIER;
+                $i++;
             }
-            case S_STRING:
-            {
-              $j = $i;
-              while ($j < $l)
-              {
-                if ($code{$j}=='\'')
-                {
-                 $this->close_state=$this->state;
-                 break;
-                }
-                $j++;
-              }
-              $out.=substr($code, $i, $j - $i + 1);
-              $i = $j;
-              break;
-            }
-          }
         }
-
-        $this->text_out($out);
-        $i++;
-      }
+        return $this->state != S_NONE;
     }
+
+    function do_scan(&$line, &$i)
+    {
+        switch ($this->state)
+        {
+            case S_DIRECTIVE:
+                $this->do_TO_EOL($line, $i);
+                break;
+
+            case S_SL_COMMENT:
+                $this->do_SL_COMMENT($line, $i);
+                break;
+
+            case S_ML_COMMENT:
+                $this->do_ML_COMMENT($line, $i);
+                break;
+
+            case S_IDENTIFIER:
+                $this->do_IDENTIFIER($line, $i);
+                break;
+
+            case S_SQ_STRING:
+                $this->do_SQ_STRING($line, $i, true);
+                break;
+
+            case S_DQ_STRING:
+                $this->do_DQ_STRING($line, $i, true);
+                break;
+        }
+     }
   }
 ?>

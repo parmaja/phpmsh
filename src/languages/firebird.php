@@ -287,7 +287,6 @@
       );
     }
 
-
     function do_open(&$line, &$i)
     {
         if ($this->state == S_NONE) {
