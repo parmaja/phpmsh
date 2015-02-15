@@ -11,7 +11,7 @@
 define('S_NONE', 0);
 define('S_SL_COMMENT', 1);
 define('S_ML_COMMENT', 2);
-define('S_STRING', 3);
+define('S_SQ_STRING', 3);
 define('S_DQ_STRING', 4);
 define('S_KEYWORD', 5);
 define('S_SYMBOL', 6);
@@ -22,6 +22,7 @@ define('S_IDENTIFIER', 10);
 define('S_VARIABLE', 11);
 define('S_VALUE', 12);
 define('S_DATATYPE', 13);
+define('S_DOC', 14);
 
 /**
  * return true if s is founded in text at index
@@ -73,21 +74,26 @@ class keywords
     function keywords($casesensitive, $kw)
     {
 
-        sort($kw);
         $this->casesensitive = $casesensitive;
-        if ($this->casesensitive)
-            foreach ($kw as $v) {
-                $this->list[$v{0}][] = $v;
-            } else
-            foreach ($kw as $v) {
-                $this->list[$v{0}][] = strtolower($v);
-            }
+
+        sort($kw);
+        if ($this->casesensitive) {
+          foreach ($kw as $v) {
+            $this->list[$v{0}][] = $v;
+          }
+        } else {
+          foreach ($kw as $v) {
+            $v = strtolower($v);
+            $this->list[$v{0}][] = $v;
+          }
+        }
     }
 
     function find($keyword)
     {
         if (empty($keyword))
           return false;
+
         if (!$this->casesensitive)
             $keyword = strtolower($keyword);
 
@@ -101,7 +107,7 @@ class keywords
             return false;
     }
 
-    function found(&$keyword) //todo rename to exists
+    function exists(&$keyword)
     {
         return $this->find($keyword) !== false;
     }
@@ -133,10 +139,13 @@ class plain_source_syn
 {
     var $output;
     var $styles;
+    var $tag = 0;
+    var $sub_state = S_NONE;
     var $state = S_NONE;
     var $open_state = S_NONE;
     var $close_state = S_NONE;
-    var $spaces = '  ';
+    var $next_state = S_NONE;
+    var $spaces = '    ';
     /*  not implemented yet
     var $gatter_show = true;
     var $gatter_with = 10;
@@ -157,7 +166,7 @@ class plain_source_syn
                 '<span class="syn_number">',
                 '</span>'
             ),
-            S_STRING => array(
+            S_SQ_STRING => array(
                 '<span class="syn_sq_string">',
                 '</span>'
             ),
@@ -253,6 +262,16 @@ class plain_source_syn
     }
 
     //functions for helping standard languages
+    function do_TO_EOL(&$line, &$i)
+    {
+        $j = strpos($line, "\n", $i);
+        if ($j === false)
+            $j = strlen($line) - 1;
+        else
+            $this->close_state = $this->state;
+        $i = $j;
+    }
+
     function do_SL_COMMENT(&$line, &$i)
     {
         $j = strpos($line, "\n", $i);
@@ -271,6 +290,17 @@ class plain_source_syn
         else
             $this->close_state = $this->state;
         $i = $j + 1;
+    }
+
+    function do_STRING(&$line, &$i, $close)
+    {
+        while ($i < strlen($line)) {
+            if (cmp($line, $close, $i)) {
+                $this->close_state = $this->state;
+                break;
+            }
+            $i++;
+        }
     }
 
     function do_SQ_STRING(&$line, &$i)
@@ -300,6 +330,10 @@ class plain_source_syn
           }
           $i++;
       }
+    }
+
+    function do_SYMBOL(&$line, &$i){
+        $this->close_state = $this->state;
     }
 
     function do_IDENTIFIER(&$line, &$i)
@@ -342,7 +376,7 @@ class plain_source_syn
 
 abstract class highlight_source_syn extends plain_source_syn
 {
-    var $keywords;
+    public $keywords;
 
     abstract function do_open(&$source, &$i);
     abstract function do_scan(&$source, &$i);
@@ -358,7 +392,7 @@ abstract class highlight_source_syn extends plain_source_syn
               $this->do_scan($source, $i);
             elseif ($this->do_open($source, $i)) {
                 $this->open_state  = $this->state;
-                $this->do_scan($source, $i);
+                ($this->do_scan($source, $i));
             }
             else
               $i++;
@@ -366,7 +400,7 @@ abstract class highlight_source_syn extends plain_source_syn
 
             if ($this->close_state == S_IDENTIFIER)
             {
-                if (!$this->keywords->found($token)) {
+                if ($this->keywords->exists($token)) {
                     $this->open_state  = S_KEYWORD;
                     $this->close_state = S_KEYWORD;
                 }
@@ -374,9 +408,13 @@ abstract class highlight_source_syn extends plain_source_syn
 
             $this->text_out($token);
 
-            if ($this->close_state != S_NONE) {
-              $this->state = S_NONE;
-              $this->close_state = S_NONE;
+            if ($this->close_state != S_NONE)
+            {
+                $this->tag = 0;
+                $this->state = $this->next_state;
+                $this->open_state = $this->state;
+                $this->close_state = S_NONE;
+                $this->next_state = S_NONE;
             }
             $index = $i;
         }

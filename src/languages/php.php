@@ -9,7 +9,6 @@
 
 class php_syn extends highlight_source_syn
 {
-    var $keywords;
     function initialize()
     {
         $this->keywords = new keywords(false, array(
@@ -83,9 +82,9 @@ class php_syn extends highlight_source_syn
                 $this->state = S_ML_COMMENT;
             } else if (cmp($line, '$', $i)) {
                 $this->state = S_VARIABLE;
-            } else if (cmp($line, '\'', $i)) {
-                $this->state = S_STRING;
-            } else if (cmp($line, '\"', $i)) {
+            } else if (cmp($line, "'", $i)) {
+                $this->state = S_SQ_STRING;
+            } else if (cmp($line, '"', $i)) {
                 $this->state = S_DQ_STRING;
             } else if (is_identifier_open($line{$i})) {
                 $this->state = S_IDENTIFIER;
@@ -115,7 +114,7 @@ class php_syn extends highlight_source_syn
                 $this->do_IDENTIFIER($line, $i);
                 break;
 
-            case S_STRING:
+            case S_SQ_STRING:
                 $this->do_SQ_STRING($line, $i);
                 break;
 

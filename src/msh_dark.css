@@ -11,12 +11,12 @@
 }
 
 .syn_keyword {
-  color:#4f89b9;
+  color:#99bbd7;
   font-weight: bold;
 }
 
 .syn_identifier {
-  color:#97bace;
+  color:#ebf1f5;
   font-weight: normal;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .syn_symbol {
-  color:#c5d3e4;
+  color:#f3efb6;
   font-weight: bold;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .syn_value {
-  color: #000090;
+  color:#dac161;
   font-weight: normal;
 }
 

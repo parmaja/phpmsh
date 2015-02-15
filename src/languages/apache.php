@@ -8,9 +8,10 @@
 */
 
 
-  class apache_syn extends plain_code_syn
+  class apache_syn extends highlight_source_syn
   {
-    function initialize(){
+    function initialize()
+    {
       $this->keywords = new keywords(false, array(
         'ServerRoot',
         'ScoreBoardFile',
@@ -76,141 +77,71 @@
         'AddOutputFilter',
         'BrowserMatch',
         'SetHandler',
+        'VirtualHost',
         'NameVirtualHost')
       );
     }
 
-    function do_highlight(&$code, &$i)
+    function do_open(&$line, &$i)
     {
-      if ($this->state==S_NONE)
-      {
-        $ch = $code{$i};
-        if ($i+1 < $l)
-          $next_ch = $code{$i+1};
-        else
-          $next_ch = '';
+        if ($this->state == S_NONE) {
+            if (cmp($line, '#', $i)) {
+                $this->state = S_SL_COMMENT;
+            } else if (cmp($line, '<', $i)) {
+                $this->state = S_SYMBOL;
+            } else if (cmp($line, '</', $i)) {
+                $this->state = S_SYMBOL;
+            } else if (cmp($line, '>', $i)) {
+                $this->state = S_SYMBOL;
+            } else if (cmp($line, "\'", $i)) {
+                $this->state = S_SQ_STRING;
+            } else if (cmp($line, '"', $i)) {
+                $this->state = S_DQ_STRING;
+            } else if (is_identifier_open($line{$i})) {
+                $this->state = S_IDENTIFIER;
+                $i++;
+            }
+        }
+        return $this->state != S_NONE;
+    }
 
-        if ($ch=='#')
-        {
-          $this->state=S_SL_COMMENT;
-          $out=$ch;
-          $i++;
-        }
-        else if (is_identifier_open($ch))
-        {
-          $this->state=S_KEYWORD;
-          $out=$ch;
-          $i++;
-        }
-        else if ($ch=='\'')
-        {
-          $this->state=S_STRING;
-          $out=$ch;
-          $i++;
-        }
-        else if ($ch=='"')
-        {
-          $this->state=S_DQ_STRING;
-          $out=$ch;
-          $i++;
-        }
-        else if ($ch=='<')
-        {
-          $this->state=S_OBJECT;
-          $out=$ch;
-          $i++;
-        }
-        else
-        {
-          $out=$ch;
-        }
-        $this->open_state=$this->state;
-        $this->close_state=S_NONE;
-      }
-
-      if ($this->state!=S_NONE)
-      {
+    function do_scan(&$line, &$i)
+    {
         switch ($this->state)
         {
-          case S_SL_COMMENT:
-            $j=strpos($code,"\n",$i);
-            if ($j===false)
-              $j=$l-1;
-            else
-              $this->close_state=$this->state;
-            $out.=substr($code, $i, $j - $i + 1);
-            $i=$j;
-            break;
-          case S_KEYWORD:
-          {
-            $j=$i;
-            while ($j < $l)
-            {
-              if (!is_identifier($code{$j}))
+            case S_SL_COMMENT:
+                $this->do_SL_COMMENT($line, $i);
                 break;
-              $j++;
-            }
-            $this->close_state=$this->state;//close if string breaked
-            $out.=substr($code, $i, $j - $i);
-            $i=$j - 1;
-            if (!$this->keywords->found($out))
-            {
-              $this->state=S_NONE;
-              $this->open_state=S_NONE;
-              $this->close_state=S_NONE;
-            }
-            break;
-          }
-          case S_OBJECT:
-          {
-            $j=$i;
-            while ($j < $l)
-            {
-              if ($code{$j}=='>')
-              {
-                $this->close_state=$this->state;
+
+            case S_ML_COMMENT:
+                $this->do_ML_COMMENT($line, $i);
                 break;
-              }
-              $j++;
-            }
-            $out.=substr($code, $i, $j - $i + 1);
-            $i=$j;
-            break;
-          }
-          case S_STRING:
-          {
-            $j=$i;
-            while ($j < $l)
-            {
-              if ($code{$j}=='\'' or $code{$j}=="\n")
-              {
-                $this->close_state=$this->state;
+
+            case S_IDENTIFIER:
+                $this->do_IDENTIFIER($line, $i);
                 break;
-              }
-              $j++;
-            }
-            $out.=substr($code, $i, $j - $i + 1);
-            $i=$j;
-            break;
-          }
-          case S_DQ_STRING:
-          {
-            $j=$i;
-            while ($j < $l)
-            {
-              if ($code{$j}=='"' or $code{$j}=="\n")
-              {
-                $this->close_state=$this->state;
+
+            case S_VALUE:
+                $this->do_TO_EOL($line, $i);
                 break;
-               }
-              $j++;
-            }
-            $out.=substr($code, $i, $j - $i + 1);
-            $i=$j;
-            break;
-          }
+
+            case S_SYMBOL:
+                $this->do_SYMBOL($line, $i);
+                break;
+
+            case S_OBJECT:
+               $this->do_IDENTIFIER($line, $i);
+                break;
+
+            case S_SQ_STRING:
+                $this->do_SQ_STRING($line, $i);
+                break;
+
+            case S_DQ_STRING:
+              $this->do_DQ_STRING($line, $i);
+              break;
         }
-      }
     }
+
   }
 ?>
